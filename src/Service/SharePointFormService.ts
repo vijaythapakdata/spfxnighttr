@@ -18,7 +18,9 @@ const items=await list.items.add({
     Age:parseInt(formData.Age),
     Salary:parseFloat(formData.Salary),
     Permission:formData.Permission,
-    Address:formData.FullAddress
+    Address:formData.FullAddress,
+    AdminId:formData.AdminId,
+    ManagerId:{results:formData.ManagerId}
 });
 return items
         }

@@ -6,6 +6,8 @@ import { CommonServiceApi } from '../../../Service/SharePointFormService';
 import { ISharePointListColumns } from '../../../CommonMethods/ISharePointFormState';
 import {sp} from "@pnp/sp/presets/all";
 import { PrimaryButton, TextField, Toggle } from '@fluentui/react';
+import {PeoplePicker,PrincipalType} from "@pnp/spfx-controls-react/lib/PeoplePicker"
+import { handleMultiSelectedPeoplePicker, handleSingleSelectedPeoplePicker } from '../../../CommonMethods/PeoplePickerHandler';
 const Spfxform:React.FC<ISpfxformProps>=(props)=>{
   const [formdata,setFormData]=React.useState<ISharePointListColumns>({
     Name:"",
@@ -13,7 +15,11 @@ const Spfxform:React.FC<ISpfxformProps>=(props)=>{
     Age:"",
     Salary:"",
     Permission:false,
-    FullAddress:""
+    FullAddress:"",
+    Admin:"",
+    AdminId:"",
+    Manager:[],
+    ManagerId:[]
   });
 
 React.useEffect(()=>{
@@ -34,7 +40,11 @@ const createForm=async()=>{
     Age:"",
     Salary:"",
     Permission:false,
-    FullAddress:""
+    FullAddress:"",
+    Admin:"",
+    AdminId:"",
+    Manager:[],
+    ManagerId:[]
     })
 
   }
@@ -75,6 +85,32 @@ const handleSubmit=React.useCallback((field:keyof ISharePointListColumns,value:s
     label="Permission"
     checked={formdata.Permission}
     onChange={(_,ch)=>handleSubmit("Permission",!!ch)}
+    />
+    {/* Single Selected */}
+    <PeoplePicker
+    context={props.context as any}
+    titleText='Admin'
+    personSelectionLimit={1}
+    showtooltip={true}
+    onChange={(items)=>handleSingleSelectedPeoplePicker(items,setFormData)}
+    principalTypes={[PrincipalType.User]}
+    ensureUser={true}
+    defaultSelectedUsers={[formdata.Admin?formdata.Admin:""]}
+    resolveDelay={1000}
+    webAbsoluteUrl={props.siteurl}
+    />
+    {/* multiselected people picker */}
+     <PeoplePicker
+    context={props.context as any}
+    titleText='Manager'
+    personSelectionLimit={2}
+    showtooltip={true}
+    onChange={(items)=>handleMultiSelectedPeoplePicker(items,setFormData)}
+    principalTypes={[PrincipalType.User]}
+    ensureUser={true}
+    defaultSelectedUsers={formdata.Manager}
+    resolveDelay={1000}
+    webAbsoluteUrl={props.siteurl}
     />
       <TextField
     label='Full Address'
