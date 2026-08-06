@@ -1,3 +1,4 @@
 export enum ListName{
-    SharePointListName="First List"
+    SharePointListName="First List",
+    Cities="City"
 }

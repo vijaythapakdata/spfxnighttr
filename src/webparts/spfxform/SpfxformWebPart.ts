@@ -11,20 +11,28 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'SpfxformWebPartStrings';
 import Spfxform from './components/Spfxform';
 import { ISpfxformProps } from './components/ISpfxformProps';
-
+import GetChoiceApi from '../../Service/ChoiceServiceApi';
 export interface ISpfxformWebPartProps {
   description: string;
 }
 
 export default class SpfxformWebPart extends BaseClientSideWebPart<ISpfxformWebPartProps> {
-
-  
-  public render(): void {
+private choiceServiceClass!:GetChoiceApi;
+  protected async onInit(): Promise<void> {
+    this.choiceServiceClass=new GetChoiceApi(this.context);
+    return super.onInit();
+  }
+  public async render(): Promise<void> {
     const element: React.ReactElement<ISpfxformProps> = React.createElement(
       Spfxform,
       {
        context:this.context,
-       siteurl:this.context.pageContext.web.absoluteUrl
+       siteurl:this.context.pageContext.web.absoluteUrl,
+       departmentOptions:await this.choiceServiceClass.getChoiceValues(this.context.pageContext.web.absoluteUrl,"Department"),
+        genderOptions:await this.choiceServiceClass.getChoiceValues(this.context.pageContext.web.absoluteUrl,"Gender"),
+       skillsOptions:await this.choiceServiceClass.getChoiceValues(this.context.pageContext.web.absoluteUrl,"Skills"),
+
+       cityOptions:await this.choiceServiceClass.getLookupValues()
       }
     );
 
